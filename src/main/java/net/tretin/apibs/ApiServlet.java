@@ -1,62 +1,29 @@
+/*
+ * This file is part of java-api-bootstrap.
+ *
+ * Foobar is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Foobar is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.tretin.apibs;
 
-import com.google.inject.Injector;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.spi.AbstractContainerLifecycleListener;
-import org.glassfish.jersey.server.spi.Container;
+import com.google.inject.Inject;
 import org.glassfish.jersey.servlet.ServletContainer;
-import org.jvnet.hk2.guice.bridge.api.HK2IntoGuiceBridge;
-
-import java.util.function.Function;
-
-import static net.tretin.apibs.Utilities.checkArgs;
 
 public final class ApiServlet extends ServletContainer {
-    private final ResourceConfig resourceConfig = new ResourceConfig();
+    @Inject
+    private ApiGuice apiGuice;
 
-    public ApiServlet(ApiConfig apiConfig, Injector injector) {
-        super(init(apiConfig, injector));
-    }
-
-    private static ResourceConfig init(ApiConfig apiConfig, Injector injector) {
-        checkArgs(apiConfig == null, injector == null);
-
-        return new ResourceConfig()
-                .register(
-                        new AbstractContainerLifecycleListener() {
-                            @Override
-                            public void onStartup(Container container) {
-                                onStartupCallback(container, injector);
-                            }
-                        }
-                );
-    }
-
-    private static void onStartupCallback(Container container, Injector injector) {
-        checkArgs(container == null, injector == null);
-
-        Function<Container, ServiceLocator> serviceLocator =
-                (Container c) -> c.getApplicationHandler().getInjectionManager().getInstance(ServiceLocator.class);
-
-        ApiInjector.init(
-                container.getApplicationHandler().getInjectionManager(),
-                serviceLocator.apply(container),
-                injector.createChildInjector(new HK2IntoGuiceBridge(serviceLocator.apply(container)))
-        );
-    }
-
-    public void scan(String... packages) {
-        checkArgs(packages == null || packages.length == 0);
-
-        resourceConfig.packages(packages);
-    }
-
-    public void register(Class<?> clazz) {
-        checkArgs(clazz == null);
-
-        resourceConfig.registerClasses(clazz);
-    }
-
-
+    @Inject
+    private ApiServletModule.SourceIterator sources;
 }
