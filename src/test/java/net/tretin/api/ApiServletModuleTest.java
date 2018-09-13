@@ -34,19 +34,44 @@
 
 package net.tretin.api;
 
-class Utilities {
-    static void checkArgs(boolean ... bs) {
-        for (boolean b : bs) {
-            if (b) throw new IllegalArgumentException();
-        }
+import com.google.inject.Guice;
+import org.junit.Before;
+import org.junit.Test;
+
+import static junit.framework.TestCase.assertEquals;
+
+public class ApiServletModuleTest {
+    private ApiServletModule module;
+
+
+    @Before
+    public void setUp() {
+        module = ApiServletModule.builder();
     }
 
-    static void checkState(String message, boolean ... bs) {
-        checkArgs(bs == null, bs.length == 0, message == null, message.isEmpty());
-        for (boolean b : bs) {
-            if (b) throw new IllegalStateException(message);
-        }
+    @Test
+    public void addPackage() {
+        module.addPackage("test");
+        assertEquals(1, module.getPakcages().size());
+        assertEquals("test", module.getPakcages().get(0));
     }
 
+    @Test
+    public void addClass() {
+        module.addClass(ApiServlet.class);
+        assertEquals(1, module.getClasses().size());
+        assertEquals(ApiServlet.class, module.getClasses().get(0));
+    }
 
+    @Test
+    public void configure() {
+        module.addClass(ApiServlet.class);
+        module.addPackage("test");
+        ApiServletModule.Sources sources =
+                Guice.createInjector(module).getInstance(ApiServletModule.Sources.class);
+        assertEquals(1, sources.getPackages().size());
+        assertEquals("test", sources.getPackages().get(0));
+        assertEquals(1, sources.getClasses().size());
+        assertEquals(ApiServlet.class, sources.getClasses().get(0));
+    }
 }
