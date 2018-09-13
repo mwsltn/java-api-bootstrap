@@ -49,10 +49,25 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.tretin.apibs;
+package net.tretin.api;
 
-interface Source {
-    boolean isPackage();
+public class ApiException extends Exception {
+    public ApiException() {
+    }
 
-    boolean isClass();
+    public ApiException(String message) {
+        super(message);
+    }
+
+    public ApiException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ApiException(Throwable cause) {
+        super(cause);
+    }
+
+    public ApiException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

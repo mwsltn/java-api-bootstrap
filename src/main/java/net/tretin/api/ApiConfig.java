@@ -32,25 +32,36 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.tretin.apibs;
+package net.tretin.api;
 
-public class ApiException extends Exception {
-    public ApiException() {
-    }
+public interface ApiConfig {
+    int getSslPort();
 
-    public ApiException(String message) {
-        super(message);
-    }
+    int getPort();
 
-    public ApiException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    class Default implements ApiConfig {
+        @Override
+        public int getPort() {
+            return 8080;
+        }
 
-    public ApiException(Throwable cause) {
-        super(cause);
-    }
+        @Override
+        public int getSslPort() {
+            return 8443;
+        }
 
-    public ApiException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+        @Override
+        public byte[] getShutdownSecret() {
+            return String.valueOf("shutdown")
+                    .getBytes();
+        }
+
+        @Override
+        public byte[] getRestartSecret() {
+            return String.valueOf("shutdown")
+                    .getBytes();
+        }
     }
+    byte[] getShutdownSecret();
+    byte[] getRestartSecret();
 }

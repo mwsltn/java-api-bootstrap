@@ -15,15 +15,4 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.tretin.apibs;
-
-import com.google.inject.Inject;
-import org.glassfish.jersey.servlet.ServletContainer;
-
-public final class ApiServlet extends ServletContainer {
-    @Inject
-    private ApiGuice apiGuice;
-
-    @Inject
-    private ApiServletModule.SourceIterator sources;
-}
+package net.tretin.api;

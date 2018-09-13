@@ -15,36 +15,19 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.tretin.apibs;
+package net.tretin.api;
 
-public interface ApiConfig {
-    int getSslPort();
-
-    int getPort();
-
-    class Default implements ApiConfig {
-        @Override
-        public int getPort() {
-            return 8080;
-        }
-
-        @Override
-        public int getSslPort() {
-            return 8443;
-        }
-
-        @Override
-        public byte[] getShutdownSecret() {
-            return String.valueOf("shutdown")
-                    .getBytes();
-        }
-
-        @Override
-        public byte[] getRestartSecret() {
-            return String.valueOf("shutdown")
-                    .getBytes();
+class Utilities {
+    static void checkArgs(boolean ... bs) {
+        for (boolean b : bs) {
+            if (b) throw new IllegalArgumentException();
         }
     }
-    byte[] getShutdownSecret();
-    byte[] getRestartSecret();
+
+    static void checkState(String message, boolean ... bs) {
+        checkArgs(bs == null, bs.length == 0, message == null, message.isEmpty());
+        for (boolean b : bs) {
+            if (b) throw new IllegalStateException(message);
+        }
+    }
 }

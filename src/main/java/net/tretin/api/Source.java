@@ -66,65 +66,10 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.tretin.apibs;
+package net.tretin.api;
 
-import com.google.inject.AbstractModule;
+interface Source {
+    boolean isPackage();
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.function.Consumer;
-
-public final class ApiServletModule extends AbstractModule {
-
-    private Iterable<Source> sources;
-
-
-    public ApiServletModule(Source... sources) {
-        this.sources = Collections.unmodifiableCollection(Arrays.asList(sources));
-    }
-
-    @Override
-    protected void configure() {
-        bind(SourceIterator.class).toInstance(
-                new SourceIterator() {
-                    Iterator<Source> iterator = sources.iterator();
-
-                    @Override
-                    public boolean hasNext() {
-                        return iterator.hasNext();
-                    }
-
-                    @Override
-                    public Source next() {
-                        return iterator.next();
-                    }
-
-                    @Override
-                    public void remove() {
-                        iterator.remove();
-                    }
-
-                    @Override
-                    public void forEachRemaining(Consumer<? super Source> action) {
-                        iterator.forEachRemaining(action);
-                    }
-                }
-        );
-    }
-
-    public interface SourceIterator extends Iterator<Source> {
-    }
-
-    public static final class Package extends AbstractSource {
-        private final String s;
-
-        public Package(String s) {
-            this.s = s;
-        }
-
-        public String get() {
-            return s;
-        }
-    }
+    boolean isClass();
 }

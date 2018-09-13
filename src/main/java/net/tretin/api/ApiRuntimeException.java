@@ -49,16 +49,25 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.tretin.apibs;
+package net.tretin.api;
 
-class AbstractSource implements Source {
-    @Override
-    public boolean isPackage() {
-        return false;
+public class ApiRuntimeException extends RuntimeException {
+    public ApiRuntimeException() {
     }
 
-    @Override
-    public boolean isClass() {
-        return false;
+    public ApiRuntimeException(String message) {
+        super(message);
+    }
+
+    public ApiRuntimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ApiRuntimeException(Throwable cause) {
+        super(cause);
+    }
+
+    public ApiRuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

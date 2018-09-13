@@ -32,25 +32,15 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.tretin.apibs;
+package net.tretin.api;
 
-public class ApiRuntimeException extends RuntimeException {
-    public ApiRuntimeException() {
-    }
+import com.google.inject.Inject;
+import org.glassfish.jersey.servlet.ServletContainer;
 
-    public ApiRuntimeException(String message) {
-        super(message);
-    }
+public final class ApiServlet extends ServletContainer {
+    @Inject
+    private ApiGuice apiGuice;
 
-    public ApiRuntimeException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ApiRuntimeException(Throwable cause) {
-        super(cause);
-    }
-
-    public ApiRuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+    @Inject
+    private ApiServletModule.SourceIterator sources;
 }
