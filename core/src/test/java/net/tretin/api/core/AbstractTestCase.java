@@ -15,25 +15,39 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yoyodine.helloworld;
+package net.tretin.api.core;
 
 import com.google.inject.Stage;
-import net.tretin.api.core.*;
+import net.tretin.api.core.testrs.TestEndpoint;
+import org.junit.Test;
 
-public class Main {
-    public static void main(String[] args) {
-        System.out.printf("Hello World...");
-        ApiServer server = new Api(Stage.DEVELOPMENT,
+public abstract class AbstractTestCase {
+
+    private final Api api;
+    private final Class<?> clazz;
+
+    protected AbstractTestCase(Class<?> clazz) {
+        if (clazz == null) throw new IllegalArgumentException();
+
+        this.api = new Api(
+                Stage.DEVELOPMENT,
                 ApiServletModule.builder()
-                        .addClass(HelloWorldEndpoint.class)
+                        .addClass(TestEndpoint.class)
                         .build(),
                 ApiServerModule.defaults()
-        ).server();
+        );
 
-        try {
-            server.start();
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
+        this.clazz = clazz;
     }
+
+    protected Api getApi() {
+        return api;
+    }
+
+    @Test
+    public void testInstantiation() {
+        getApi().injector().getInstance(clazz);
+    }
+
+
 }

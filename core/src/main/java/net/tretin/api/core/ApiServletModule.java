@@ -1,14 +1,13 @@
 package net.tretin.api.core;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import com.google.inject.Injector;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.glassfish.jersey.server.spi.AbstractContainerLifecycleListener;
 import org.glassfish.jersey.server.spi.Container;
 import org.jvnet.hk2.guice.bridge.api.GuiceBridge;
 import org.jvnet.hk2.guice.bridge.api.GuiceIntoHK2Bridge;
-import org.jvnet.hk2.guice.bridge.api.HK2IntoGuiceBridge;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -30,27 +29,18 @@ public final class ApiServletModule extends AbstractModule {
         if (packages.isEmpty() && classes.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        this.packages = packages;
-        this.classes = classes;
+        this.packages = Collections.unmodifiableSet(packages);
+        this.classes = Collections.unmodifiableSet(classes);
     }
 
     public static final ApiServletModule.Builder builder() {
         return new ApiServletModule.Builder();
     }
 
-    @Provides
-    public ApiServletModule.PackageSources getPackageSources() {
-        return new PackageSources(packages);
-    }
-
-//    @Provides
-//    public ApiServletModule.BindingListener getBindingListener() {
-//        return new ApiServletModule.BindingListener();
-//    }
-
-    @Provides
-    public ApiServletModule.ClassSources getClassSources() {
-        return new ClassSources(classes);
+    @Override
+    protected void configure() {
+        bind(PackageSources.class).toInstance(new PackageSources(packages));
+        bind(ClassSources.class).toInstance(new ClassSources(classes));
     }
 
     public static final class Builder {
@@ -77,36 +67,25 @@ public final class ApiServletModule extends AbstractModule {
         }
 
         public ApiServletModule build() {
-            return new ApiServletModule(
-                    Collections.unmodifiableSet(packages),
-                    Collections.unmodifiableSet(classes)
-            );
+            return new ApiServletModule(packages, classes);
         }
     }
 
-    @Override
-    protected void configure() {
-    }
-
-    final class PackageSources extends HashSet<String> {
+    static final class PackageSources extends HashSet<String> {
         PackageSources(Set<String> s) {
             super(s);
         }
     }
 
-    final class ClassSources extends HashSet<Class<?>> {
+    static final class ClassSources extends HashSet<Class<?>> {
         ClassSources(Set<Class<?>> s) {
             super(s);
         }
     }
 
-    public static class BindingListener extends AbstractContainerLifecycleListener {
-        private ApiGuice apiGuice;
-
+    static class BindingListener extends AbstractContainerLifecycleListener {
         @Inject
-        public BindingListener(ApiGuice apiGuice) {
-            this.apiGuice = apiGuice;
-        }
+        private Injector injector;
 
         @Override
         public void onStartup(Container container) {
@@ -119,9 +98,10 @@ public final class ApiServletModule extends AbstractModule {
 
             getServiceLocator(jerseyInjector(container))
                     .getService(GuiceIntoHK2Bridge.class)
-                    .bridgeGuiceInjector(apiGuice.injector());
+                    .bridgeGuiceInjector(injector);
 
-            apiGuice.addModules(new HK2IntoGuiceBridge(getServiceLocator(jerseyInjector(container))));
+//TODO: how do we take care of this direction
+//            api.addModules(new HK2IntoGuiceBridge(getServiceLocator(jerseyInjector(container))));
         }
 
         ServiceLocator getServiceLocator(InjectionManager jerseyInjector) {
@@ -141,4 +121,5 @@ public final class ApiServletModule extends AbstractModule {
             return container.getApplicationHandler().getInjectionManager();
         }
     }
+
 }

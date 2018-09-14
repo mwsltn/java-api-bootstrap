@@ -15,25 +15,17 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yoyodine.helloworld;
+package net.tretin.api.core.testrs;
 
-import com.google.inject.Stage;
-import net.tretin.api.core.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
-public class Main {
-    public static void main(String[] args) {
-        System.out.printf("Hello World...");
-        ApiServer server = new Api(Stage.DEVELOPMENT,
-                ApiServletModule.builder()
-                        .addClass(HelloWorldEndpoint.class)
-                        .build(),
-                ApiServerModule.defaults()
-        ).server();
+@Path("test")
+public class TestEndpoint {
 
-        try {
-            server.start();
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
+    @GET
+    public String test() {
+        return "Hello!";
     }
+
 }

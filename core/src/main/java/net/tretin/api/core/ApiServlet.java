@@ -14,9 +14,15 @@ public final class ApiServlet extends ServletContainer {
             ApiServletModule.ClassSources classSources,
             ApiServletModule.BindingListener bindingListener) {
         super(resourceConfig);
+
+        if (resourceConfig == null) throw new IllegalArgumentException();
+        if (packageSources == null) throw new IllegalArgumentException();
+        if (classSources == null) throw new IllegalArgumentException();
+        if (packageSources.isEmpty() && classSources.isEmpty()) throw new IllegalArgumentException();
+        if (bindingListener == null) throw new IllegalArgumentException();
+
         resourceConfig.packages(packageSources.toArray(new String[0]));
         resourceConfig.registerClasses(classSources.toArray(new Class<?>[0]));
-        //resourceConfig.register(new ApiServletModule.BindingListener());
         resourceConfig.register(bindingListener);
     }
 }

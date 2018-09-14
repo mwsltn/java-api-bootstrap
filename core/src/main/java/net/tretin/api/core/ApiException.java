@@ -1,8 +1,6 @@
 package net.tretin.api.core;
 
 public class ApiException extends Exception {
-    public ApiException() {
-    }
 
     public ApiException(String message) {
         super(message);
@@ -12,11 +10,4 @@ public class ApiException extends Exception {
         super(message, cause);
     }
 
-    public ApiException(Throwable cause) {
-        super(cause);
-    }
-
-    public ApiException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

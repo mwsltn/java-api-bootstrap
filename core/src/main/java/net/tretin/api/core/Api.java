@@ -9,20 +9,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Singleton
-public class ApiGuice {
+public class Api {
     private final static Object lock = new Object();
 
     private Injector guice;
 
-    public ApiGuice(Stage stage, ApiServletModule servletModule, ApiServerModule serverModule, Module... moduleList) {
+    public Api(Stage stage, ApiServletModule servletModule, ApiServerModule serverModule, Module... moduleList) {
+        if (stage == null) throw new IllegalArgumentException();
+        if (servletModule == null) throw new IllegalArgumentException();
+        if (serverModule == null) throw new IllegalArgumentException();
+
         List<Module> modules = new LinkedList<>();
 
-        final ApiGuice _this = this;
+        final Api _this = this;
         modules.add(
                 new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(ApiGuice.class).toInstance(_this);
+                        bind(Api.class).toInstance(_this);
                     }
                 }
         );
@@ -39,7 +43,7 @@ public class ApiGuice {
         return this.guice;
     }
 
-    public ApiGuice addModules(Module... modules) {
+    public Api addModules(Module... modules) {
         if (modules == null || modules.length == 0) {
             throw new IllegalArgumentException();
         }

@@ -1,6 +1,5 @@
 package net.tretin.api.core;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpCompliance;
@@ -19,7 +18,8 @@ public class ApiServer {
     private final Server server;
 
     @Inject
-    public ApiServer(ApiServerModule.ApiConfig config, ApiServlet servlet, ApiGuice apiGuice) {
+//    public ApiServer(ApiServerModule.ApiConfig config, ApiServlet servlet, Api apiInjector) {
+    public ApiServer(ApiServerModule.ApiConfig config, ApiServlet servlet) {
         MonitoredQueuedThreadPool threadPool = new MonitoredQueuedThreadPool();
         threadPool.setMinThreads(config.getMinThreads());
         threadPool.setMaxThreads(config.getMaxThreads());
@@ -49,49 +49,49 @@ public class ApiServer {
 
         this.server = server;
 
-        final ApiServer _this = this;
-        apiGuice.addModules(
-                new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        bind(Server.class).toInstance(_this.server);
-                    }
-                }
-        );
+//        final ApiServer _this = this;
+//        apiInjector.addModules(
+//                new AbstractModule() {
+//                    @Override
+//                    protected void configure() {
+//                        bind(Server.class).toInstance(_this.server);
+//                    }
+//                }
+//        );
     }
 
     public void start() throws ApiException {
-        try {
-            this.server.start();
-        } catch (Exception e) {
-            throw new ApiException("could not start Jetty", e);
-        }
-
-        this.isRunning = true;
-
-        while (this.isRunning) {
-            try {
-                server.join();
-            } catch (InterruptedException e) {
-                //noinspection StatementWithEmptyBody
-                if (this.isRunning) {
-                    //TODO: log suprioius exceptions
-                    //log this event, perhaps report back as metric, but we sorta want this thread to always hang until
-                    //we explicitly call stop().
-                } else {
-                    throw new ApiException("didn't expect interrupt while not running");
-                }
-            }
-        }
+//        try {
+//            this.server.start();
+//        } catch (Exception e) {
+//            throw new ApiException("could not start Jetty", e);
+//        }
+//
+//        this.isRunning = true;
+//
+//        while (this.isRunning) {
+//            try {
+//                server.join();
+//            } catch (InterruptedException e) {
+//                //noinspection StatementWithEmptyBody
+//                if (this.isRunning) {
+//                    //TODO: log suprioius exceptions
+//                    //log this event, perhaps report back as metric, but we sorta want this thread to always hang until
+//                    //we explicitly call stop().
+//                } else {
+//                    throw new ApiException("didn't expect interrupt while not running");
+//                }
+//            }
+//        }
     }
 
-    public void stop() throws ApiException {
-        this.isRunning = false;
-        try {
-            server.stop();
-        } catch (Exception e) {
-            throw new ApiException("can't stop server, e)");
-        }
+    public void stop() {
+//        this.isRunning = false;
+//        try {
+//            server.stop();
+//        } catch (Exception e) {
+//            throw new ApiException("can't stop server, e)");
+//        }
     }
 
 }

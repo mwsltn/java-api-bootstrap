@@ -1,23 +1,19 @@
 package net.tretin.api.core;
 
-import com.google.inject.Stage;
-import org.junit.Before;
+import com.google.inject.Guice;
+import net.tretin.api.core.testrs.TestEndpoint;
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertNotNull;
+
 public class ApiServletTest {
-
-    @Before
-    public void setUp() {
-        new ApiGuice(
-                Stage.DEVELOPMENT,
-                ApiServletModule.builder().addPackage("net.tretin.api").build(),
-                ApiServerModule.builder().build()
-        ).injector().getInstance(ApiServlet.class);
-    }
-
     @Test
-    public void noop() {
+    public void instantiate() {
+        ApiServlet servlet = Guice.createInjector(
+                ApiServletModule.builder()
+                        .addClass(TestEndpoint.class)
+                        .build()
+        ).getInstance(ApiServlet.class);
+        assertNotNull(servlet);
     }
-
-
 }

@@ -15,25 +15,21 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yoyodine.helloworld;
+package net.tretin.api.core;
 
-import com.google.inject.Stage;
-import net.tretin.api.core.*;
+import com.google.inject.Guice;
+import net.tretin.api.core.testrs.TestEndpoint;
+import org.junit.Test;
 
-public class Main {
-    public static void main(String[] args) {
-        System.out.printf("Hello World...");
-        ApiServer server = new Api(Stage.DEVELOPMENT,
+public class BindingListenerTest {
+
+    @Test
+    public void instantiate() {
+        ApiServletModule.BindingListener listener = Guice.createInjector(
                 ApiServletModule.builder()
-                        .addClass(HelloWorldEndpoint.class)
-                        .build(),
-                ApiServerModule.defaults()
-        ).server();
-
-        try {
-            server.start();
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
+                        .addClass(TestEndpoint.class)
+                        .build()
+        ).getInstance(ApiServletModule.BindingListener.class);
     }
+
 }

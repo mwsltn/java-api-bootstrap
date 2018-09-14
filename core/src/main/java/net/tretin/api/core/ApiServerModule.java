@@ -3,13 +3,6 @@ package net.tretin.api.core;
 import com.google.inject.AbstractModule;
 
 public class ApiServerModule extends AbstractModule {
-    private ApiConfig apiConfig;
-
-    private ApiServerModule(ApiConfig apiConfig) {
-        if (apiConfig == null) throw new IllegalArgumentException();
-
-        this.apiConfig = apiConfig;
-    }
 
     public static Builder builder() {
         return new Builder().setDefaultConfig();
@@ -17,15 +10,6 @@ public class ApiServerModule extends AbstractModule {
 
     public static ApiServerModule defaults() {
         return builder().setDefaultConfig().build();
-    }
-
-    @Override
-    protected void configure() {
-        if (apiConfig != null) {
-            bind(ApiConfig.class).toInstance(apiConfig);
-        } else {
-            bind(ApiConfig.class).toInstance(new DefaultConfig());
-        }
     }
 
     public static class Builder {
@@ -126,5 +110,21 @@ public class ApiServerModule extends AbstractModule {
     }
 
     public static final class DefaultConfig extends AbstractConfig {
+    }
+
+    private ApiConfig apiConfig;
+
+    private ApiServerModule(ApiConfig apiConfig) {
+        if (apiConfig == null) throw new IllegalArgumentException();
+        this.apiConfig = apiConfig;
+    }
+
+    @Override
+    protected void configure() {
+        if (apiConfig != null) {
+            bind(ApiConfig.class).toInstance(apiConfig);
+        } else {
+            bind(ApiConfig.class).toInstance(new DefaultConfig());
+        }
     }
 }
