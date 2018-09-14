@@ -34,18 +34,33 @@
 
 package net.tretin.api;
 
-class Utilities {
-    static void checkArgs(boolean ... bs) {
-        for (boolean b : bs) {
-            if (b) throw new IllegalArgumentException();
-        }
+import com.google.inject.Stage;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ApiServletTest {
+
+    private ApiServlet servlet;
+
+    @Before
+    public void setUp() {
+        new ApiGuice(
+                Stage.DEVELOPMENT,
+                ApiServletModule.builder().addPackage("net.tretin.api").build()
+        ).injector().getInstance(ApiServlet.class);
     }
 
-    static void checkState(String message, boolean ... bs) {
-        checkArgs(bs == null, bs.length == 0, message == null, message.isEmpty());
-        for (boolean b : bs) {
-            if (b) throw new IllegalStateException(message);
-        }
+    @Test
+    public void test() {
+//        assertNotNull(servlet);
+//        servlet.getConfiguration()
+//                .getClasses()
+//                .forEach(c -> System.out.println(c.getName()));
+    }
+
+    @After
+    public void tearDown() {
     }
 
 
