@@ -16,6 +16,7 @@ public final class ApiServlet extends ServletContainer {
         super(resourceConfig);
         resourceConfig.packages(packageSources.toArray(new String[0]));
         resourceConfig.registerClasses(classSources.toArray(new Class<?>[0]));
+        //resourceConfig.register(new ApiServletModule.BindingListener());
         resourceConfig.register(bindingListener);
     }
 }

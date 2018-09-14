@@ -15,7 +15,7 @@ public class ApiGuice {
     private Injector guice;
 
     public ApiGuice(Stage stage, Module... moduleList) {
-        List<Module> modules = new LinkedList<>(Arrays.asList(moduleList));
+        List<Module> modules = new LinkedList<>();
 
         final ApiGuice _this = this;
         modules.add(
@@ -26,6 +26,8 @@ public class ApiGuice {
                     }
                 }
         );
+
+        modules.addAll(Arrays.asList(moduleList));
 
         this.guice = new InternalInjectorCreator()
                 .addModules(modules)

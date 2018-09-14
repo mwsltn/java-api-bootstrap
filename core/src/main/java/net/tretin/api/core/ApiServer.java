@@ -58,7 +58,6 @@ public class ApiServer {
         );
     }
 
-
     public void start() throws ApiException {
         try {
             this.server.start();

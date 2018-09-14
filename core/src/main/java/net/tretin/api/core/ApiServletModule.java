@@ -2,7 +2,6 @@ package net.tretin.api.core;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.internal.inject.InjectionManager;
 import org.glassfish.jersey.server.spi.AbstractContainerLifecycleListener;
@@ -39,15 +38,15 @@ public final class ApiServletModule extends AbstractModule {
         return new ApiServletModule.Builder();
     }
 
-    @Override
-    protected void configure() {
-        bind(BindingListener.class).toInstance(new BindingListener());
-    }
-
     @Provides
     public ApiServletModule.PackageSources getPackageSources() {
         return new PackageSources(packages);
     }
+
+//    @Provides
+//    public ApiServletModule.BindingListener getBindingListener() {
+//        return new ApiServletModule.BindingListener();
+//    }
 
     @Provides
     public ApiServletModule.ClassSources getClassSources() {
@@ -85,10 +84,29 @@ public final class ApiServletModule extends AbstractModule {
         }
     }
 
-    @Singleton
-    class BindingListener extends AbstractContainerLifecycleListener {
-        @Inject
+    @Override
+    protected void configure() {
+    }
+
+    final class PackageSources extends HashSet<String> {
+        PackageSources(Set<String> s) {
+            super(s);
+        }
+    }
+
+    final class ClassSources extends HashSet<Class<?>> {
+        ClassSources(Set<Class<?>> s) {
+            super(s);
+        }
+    }
+
+    public static class BindingListener extends AbstractContainerLifecycleListener {
         private ApiGuice apiGuice;
+
+        @Inject
+        public BindingListener(ApiGuice apiGuice) {
+            this.apiGuice = apiGuice;
+        }
 
         @Override
         public void onStartup(Container container) {
@@ -121,18 +139,6 @@ public final class ApiServletModule extends AbstractModule {
 
         InjectionManager jerseyInjector(Container container) {
             return container.getApplicationHandler().getInjectionManager();
-        }
-    }
-
-    final class PackageSources extends HashSet<String> {
-        PackageSources(Set<String> s) {
-            super(s);
-        }
-    }
-
-    final class ClassSources extends HashSet<Class<?>> {
-        ClassSources(Set<Class<?>> s) {
-            super(s);
         }
     }
 }
