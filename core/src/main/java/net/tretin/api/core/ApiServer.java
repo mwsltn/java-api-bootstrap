@@ -12,6 +12,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 
 public class ApiServer {
+    private volatile boolean isRunning = false;
+
     private final Server server;
 
     @Inject
@@ -54,6 +56,41 @@ public class ApiServer {
                     }
                 }
         );
+    }
+
+
+    public void start() throws ApiException {
+        try {
+            this.server.start();
+        } catch (Exception e) {
+            throw new ApiException("could not start Jetty", e);
+        }
+
+        this.isRunning = true;
+
+        while (this.isRunning) {
+            try {
+                server.join();
+            } catch (InterruptedException e) {
+                //noinspection StatementWithEmptyBody
+                if (this.isRunning) {
+                    //TODO: log suprioius exceptions
+                    //log this event, perhaps report back as metric, but we sorta want this thread to always hang until
+                    //we explicitly call stop().
+                } else {
+                    throw new ApiException("didn't expect interrupt while not running");
+                }
+            }
+        }
+    }
+
+    public void stop() throws ApiException {
+        this.isRunning = false;
+        try {
+            server.stop();
+        } catch (Exception e) {
+            throw new ApiException("can't stop server, e)");
+        }
     }
 
 }

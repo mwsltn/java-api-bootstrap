@@ -47,5 +47,13 @@ public class ApiGuice {
         return this;
     }
 
+    public ApiServer server() {
+        return guice.getInstance(ApiServer.class);
+    }
+
+
+    public ApiServlet servlet() {
+        return guice.getInstance(ApiServlet.class);
+    }
 
 }

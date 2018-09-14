@@ -45,7 +45,7 @@ public class ApiServerModule extends AbstractModule {
         byte[] getShutdownSecret();
     }
 
-    public abstract class AbstractConfig implements ApiConfig {
+    public static abstract class AbstractConfig implements ApiConfig {
         @Override
         public int getMinThreads() {
             return 4;
@@ -97,6 +97,6 @@ public class ApiServerModule extends AbstractModule {
         }
     }
 
-    public final class DefaultConfig extends AbstractConfig {
+    public static final class DefaultConfig extends AbstractConfig {
     }
 }

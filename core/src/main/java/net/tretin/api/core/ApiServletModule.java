@@ -35,7 +35,7 @@ public final class ApiServletModule extends AbstractModule {
         this.classes = classes;
     }
 
-    public static ApiServletModule.Builder builder() {
+    public static final ApiServletModule.Builder builder() {
         return new ApiServletModule.Builder();
     }
 
