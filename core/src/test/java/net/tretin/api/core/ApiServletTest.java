@@ -10,7 +10,8 @@ public class ApiServletTest {
     public void setUp() {
         new ApiGuice(
                 Stage.DEVELOPMENT,
-                ApiServletModule.builder().addPackage("net.tretin.api").build()
+                ApiServletModule.builder().addPackage("net.tretin.api").build(),
+                ApiServerModule.builder().build()
         ).injector().getInstance(ApiServlet.class);
     }
 

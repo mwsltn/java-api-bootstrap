@@ -14,7 +14,7 @@ public class ApiGuice {
 
     private Injector guice;
 
-    public ApiGuice(Stage stage, Module... moduleList) {
+    public ApiGuice(Stage stage, ApiServletModule servletModule, ApiServerModule serverModule, Module... moduleList) {
         List<Module> modules = new LinkedList<>();
 
         final ApiGuice _this = this;

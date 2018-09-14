@@ -2,6 +2,7 @@ package net.tretin.api.core;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -11,6 +12,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 
+@Singleton
 public class ApiServer {
     private volatile boolean isRunning = false;
 

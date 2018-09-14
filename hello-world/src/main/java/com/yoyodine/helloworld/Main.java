@@ -28,7 +28,7 @@ public class Main {
                 ApiServletModule.builder()
                         .addClass(HelloWorldEndpoint.class)
                         .build(),
-                new ApiServerModule(new ApiServerModule.DefaultConfig())
+                ApiServerModule.defaults()
         ).server();
 
         try {
