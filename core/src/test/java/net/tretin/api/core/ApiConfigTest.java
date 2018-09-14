@@ -17,34 +17,45 @@
 
 package net.tretin.api.core;
 
-import com.google.inject.Guice;
-import org.junit.Test;
-
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
 public class ApiConfigTest {
 
-    @Test
-    public void instantiate() {
-        ApiServerModule.ApiConfig config = Guice.createInjector(ApiServerModule.defaults())
-                .getInstance(ApiServerModule.ApiConfig.class);
-        assertNotNull(config);
-        assertEquals(8080, config.getPort());
-        config = Guice.createInjector(
-                ApiServerModule.builder()
-                        .setConfig(
-                                new ApiServerModule.AbstractConfig() {
-                                    @Override
-                                    public int getPort() {
-                                        return 1234;
-                                    }
-                                }
-                        )
-                        .build()
-        ).getInstance(ApiServerModule.ApiConfig.class);
-        assertNotNull(config);
-        assertEquals(1234, config.getPort());
+    public static class DefaulConfig extends AbstractTestCase<ApiServerModule.ApiConfig> {
+        public DefaulConfig() {
+            super(ApiServerModule.ApiConfig.class);
+        }
+
+        @Override
+        public void testInstantiatedObject() {
+            assertNotNull(getT());
+            assertEquals(8080, getT().getPort());
+        }
     }
 
+    public static class CustomConfig extends AbstractTestCase<ApiServerModule.ApiConfig> {
+        public CustomConfig() {
+            super(
+                    ApiServerModule.ApiConfig.class,
+                    ApiServerModule.builder()
+                            .setConfig(
+                                    new ApiServerModule.AbstractConfig() {
+                                        @Override
+                                        public int getPort() {
+                                            return 1234;
+                                        }
+                                    }
+                            )
+                            .build()
+
+            );
+        }
+
+        @Override
+        public void testInstantiatedObject() {
+            assertNotNull(getT());
+            assertEquals(1234, getT().getPort());
+        }
+    }
 }

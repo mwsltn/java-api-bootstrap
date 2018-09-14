@@ -17,20 +17,23 @@
 
 package net.tretin.api.core;
 
-public class PackageSourceTest extends AbstractTestCase {
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
+
+public class PackageSourceTest extends AbstractTestCase<ApiServletModule.PackageSources> {
     public PackageSourceTest() {
-        super(ApiServletModule.PackageSources.class);
+        super(
+                ApiServletModule.PackageSources.class,
+                ApiServletModule.builder()
+                        .addPackage("net.tretin.api.core.testrs")
+                        .build()
+        );
     }
 
-//    @Test
-//    public void instantiate() {
-//        ApiServletModule.PackageSources packages = Guice.createInjector(
-//                ApiServletModule.builder()
-//                        .addPackage("net.tretin.api.core.testrs")
-//                        .build()
-//        ).getInstance(ApiServletModule.PackageSources.class);
-//        assertNotNull(packages);
-//        assertEquals(1, packages.size());
-//        packages.forEach(s -> assertEquals("net.tretin.api.core.testrs", s));
-//    }
+    @Override
+    public void testInstantiatedObject() {
+        assertNotNull(getT());
+        assertEquals(1, getT().size());
+        getT().forEach(s -> assertEquals("net.tretin.api.core.testrs", s));
+    }
 }

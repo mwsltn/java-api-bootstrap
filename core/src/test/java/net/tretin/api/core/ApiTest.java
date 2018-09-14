@@ -22,6 +22,7 @@ import net.tretin.api.core.testrs.TestEndpoint;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertSame;
 
 public class ApiTest {
 
@@ -35,6 +36,8 @@ public class ApiTest {
                 ApiServerModule.defaults()
         );
         assertNotNull(api);
+        assertNotNull(api.injector().getInstance(Api.class));
+        assertSame(api, api.injector().getInstance(Api.class));
     }
 
 }

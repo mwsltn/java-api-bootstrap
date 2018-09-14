@@ -32,34 +32,64 @@ public abstract class AbstractTestCase<T> {
                 clazz,
                 ApiServletModule.builder()
                         .addClass(TestEndpoint.class)
-                        .build()
+                        .build(),
+                ApiServerModule.defaults()
         );
     }
 
-    protected AbstractTestCase(Class<? extends T> clazz, ApiServletModule servletModule) {
+    protected AbstractTestCase(
+            Class<? extends T> clazz,
+            ApiServletModule servletModule
+    ) {
+        this(
+                clazz,
+                servletModule,
+                ApiServerModule.defaults()
+        );
+    }
+
+    protected AbstractTestCase(
+            Class<? extends T> clazz,
+            ApiServerModule serverModule
+    ) {
+        this(
+                clazz,
+                ApiServletModule.builder()
+                        .addClass(TestEndpoint.class)
+                        .build(),
+                serverModule
+        );
+    }
+
+    protected AbstractTestCase(
+            Class<? extends T> clazz,
+            ApiServletModule servletModule,
+            ApiServerModule serverModule
+    ) {
         if (clazz == null) throw new IllegalArgumentException();
         if (servletModule == null) throw new IllegalArgumentException();
+        if (serverModule == null) throw new IllegalArgumentException();
 
         this.clazz = clazz;
 
         this.api = new Api(
                 Stage.DEVELOPMENT,
                 servletModule,
-                ApiServerModule.defaults()
+                serverModule
         );
 
         this.t = api.injector().getInstance(clazz);
     }
 
-    protected Api getApi() {
+    final protected Api getApi() {
         return api;
     }
 
-    protected T getT() {
+    final protected T getT() {
         return t;
     }
 
-    protected Class<? extends T> getTestClass() {
+    final protected Class<? extends T> getTestClass() {
         return clazz;
     }
 
@@ -67,4 +97,7 @@ public abstract class AbstractTestCase<T> {
     public void testInstantiation() {
         getApi().injector().getInstance(clazz);
     }
+
+    @Test
+    abstract public void testInstantiatedObject();
 }

@@ -17,19 +17,17 @@
 
 package net.tretin.api.core;
 
-import com.google.inject.Guice;
-import net.tretin.api.core.testrs.TestEndpoint;
-import org.junit.Test;
+import static junit.framework.TestCase.assertNotNull;
 
-public class BindingListenerTest {
+public class BindingListenerTest extends AbstractTestCase<ApiServletModule.BindingListener> {
 
-    @Test
-    public void instantiate() {
-        ApiServletModule.BindingListener listener = Guice.createInjector(
-                ApiServletModule.builder()
-                        .addClass(TestEndpoint.class)
-                        .build()
-        ).getInstance(ApiServletModule.BindingListener.class);
+    public BindingListenerTest() {
+        super(ApiServletModule.BindingListener.class);
+    }
+
+    @Override
+    public void testInstantiatedObject() {
+        assertNotNull(getT());
     }
 
 }

@@ -1,14 +1,13 @@
 package net.tretin.api.core;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.inject.*;
 import com.google.inject.Module;
-import com.google.inject.Stage;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+@Singleton
 public class Api {
     private final static Object lock = new Object();
 
@@ -29,6 +28,15 @@ public class Api {
         }
 
         List<Module> modules = new LinkedList<>();
+        final Api _this = this;
+        modules.add(
+                new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(Api.class).toInstance(_this);
+                    }
+                }
+        );
         modules.add(servletModule);
         modules.add(serverModule);
         modules.addAll(Arrays.asList(extensions));

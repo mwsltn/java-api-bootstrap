@@ -17,23 +17,20 @@
 
 package net.tretin.api.core;
 
-import com.google.inject.Guice;
 import net.tretin.api.core.testrs.TestEndpoint;
-import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
-public class ClassSourceTest {
-    @Test
-    public void instantiate() {
-        ApiServletModule.ClassSources classes = Guice.createInjector(
-                ApiServletModule.builder()
-                        .addClass(TestEndpoint.class)
-                        .build()
-        ).getInstance(ApiServletModule.ClassSources.class);
-        assertNotNull(classes);
-        assertEquals(1, classes.size());
-        classes.forEach((c) -> assertEquals(TestEndpoint.class, c));
+public class ClassSourceTest extends AbstractTestCase<ApiServletModule.ClassSources> {
+    public ClassSourceTest() {
+        super(ApiServletModule.ClassSources.class);
+    }
+
+    @Override
+    public void testInstantiatedObject() {
+        assertNotNull(getT());
+        assertEquals(1, getT().size());
+        getT().forEach((c) -> assertEquals(TestEndpoint.class, c));
     }
 }

@@ -17,31 +17,15 @@
 
 package net.tretin.api.core;
 
-import com.google.inject.Guice;
-import net.tretin.api.core.testrs.TestEndpoint;
-import org.junit.Test;
-
 import static junit.framework.TestCase.assertNotNull;
 
-public class ApiServerTest {
-
-    @Test
-    public void instantiate() {
-        ApiServer server = Guice.createInjector(
-                ApiServletModule.builder()
-                        .addClass(TestEndpoint.class)
-                        .build(),
-                ApiServerModule.defaults()
-        ).getInstance(ApiServer.class);
-        assertNotNull(server);
-//        new Api(
-//                Stage.DEVELOPMENT,
-//                ApiServletModule.builder()
-//                        .addClass(TestEndpoint.class)
-//                        .build(),
-//                ApiServerModule.defaults()
-//        ).injector().getInstance(ApiServletModule.PackageSources.class);
-
+public class ApiServerTest extends AbstractTestCase<ApiServer> {
+    public ApiServerTest() {
+        super(ApiServer.class);
     }
 
+    @Override
+    public void testInstantiatedObject() {
+        assertNotNull(getT());
+    }
 }
