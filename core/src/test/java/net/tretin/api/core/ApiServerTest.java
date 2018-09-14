@@ -34,6 +34,14 @@ public class ApiServerTest {
                 ApiServerModule.defaults()
         ).getInstance(ApiServer.class);
         assertNotNull(server);
+//        new Api(
+//                Stage.DEVELOPMENT,
+//                ApiServletModule.builder()
+//                        .addClass(TestEndpoint.class)
+//                        .build(),
+//                ApiServerModule.defaults()
+//        ).injector().getInstance(ApiServletModule.PackageSources.class);
+
     }
 
 }

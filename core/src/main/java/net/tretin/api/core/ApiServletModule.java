@@ -87,6 +87,9 @@ public final class ApiServletModule extends AbstractModule {
         @Inject
         private Injector injector;
 
+//        @Inject
+//        private Api api;
+
         @Override
         public void onStartup(Container container) {
             if (container == null) {

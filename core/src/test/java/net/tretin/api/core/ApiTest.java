@@ -17,20 +17,24 @@
 
 package net.tretin.api.core;
 
-public class PackageSourceTest extends AbstractTestCase {
-    public PackageSourceTest() {
-        super(ApiServletModule.PackageSources.class);
+import com.google.inject.Stage;
+import net.tretin.api.core.testrs.TestEndpoint;
+import org.junit.Test;
+
+import static junit.framework.TestCase.assertNotNull;
+
+public class ApiTest {
+
+    @Test
+    public void instantiate() {
+        Api api = new Api(
+                Stage.DEVELOPMENT,
+                ApiServletModule.builder()
+                        .addClass(TestEndpoint.class)
+                        .build(),
+                ApiServerModule.defaults()
+        );
+        assertNotNull(api);
     }
 
-//    @Test
-//    public void instantiate() {
-//        ApiServletModule.PackageSources packages = Guice.createInjector(
-//                ApiServletModule.builder()
-//                        .addPackage("net.tretin.api.core.testrs")
-//                        .build()
-//        ).getInstance(ApiServletModule.PackageSources.class);
-//        assertNotNull(packages);
-//        assertEquals(1, packages.size());
-//        packages.forEach(s -> assertEquals("net.tretin.api.core.testrs", s));
-//    }
 }

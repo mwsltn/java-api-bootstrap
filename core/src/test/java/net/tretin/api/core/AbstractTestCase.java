@@ -21,33 +21,50 @@ import com.google.inject.Stage;
 import net.tretin.api.core.testrs.TestEndpoint;
 import org.junit.Test;
 
-public abstract class AbstractTestCase {
+public abstract class AbstractTestCase<T> {
 
+    private final Class<? extends T> clazz;
     private final Api api;
-    private final Class<?> clazz;
+    private final T t;
 
-    protected AbstractTestCase(Class<?> clazz) {
+    protected AbstractTestCase(Class<? extends T> clazz) {
+        this(
+                clazz,
+                ApiServletModule.builder()
+                        .addClass(TestEndpoint.class)
+                        .build()
+        );
+    }
+
+    protected AbstractTestCase(Class<? extends T> clazz, ApiServletModule servletModule) {
         if (clazz == null) throw new IllegalArgumentException();
+        if (servletModule == null) throw new IllegalArgumentException();
+
+        this.clazz = clazz;
 
         this.api = new Api(
                 Stage.DEVELOPMENT,
-                ApiServletModule.builder()
-                        .addClass(TestEndpoint.class)
-                        .build(),
+                servletModule,
                 ApiServerModule.defaults()
         );
 
-        this.clazz = clazz;
+        this.t = api.injector().getInstance(clazz);
     }
 
     protected Api getApi() {
         return api;
     }
 
+    protected T getT() {
+        return t;
+    }
+
+    protected Class<? extends T> getTestClass() {
+        return clazz;
+    }
+
     @Test
     public void testInstantiation() {
         getApi().injector().getInstance(clazz);
     }
-
-
 }

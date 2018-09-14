@@ -1,46 +1,61 @@
 package net.tretin.api.core;
 
-import com.google.inject.*;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.internal.InternalInjectorCreator;
+import com.google.inject.Stage;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-@Singleton
 public class Api {
     private final static Object lock = new Object();
 
-    private Injector guice;
+    private Injector injector;
 
-    public Api(Stage stage, ApiServletModule servletModule, ApiServerModule serverModule, Module... moduleList) {
+    public Api(Stage stage, ApiServletModule servletModule, ApiServerModule serverModule, Module... extensions) {
         if (stage == null) throw new IllegalArgumentException();
         if (servletModule == null) throw new IllegalArgumentException();
         if (serverModule == null) throw new IllegalArgumentException();
 
+        for (Module m : extensions) {
+            if (m instanceof ApiServletModule) {
+                throw new IllegalArgumentException("cannot install ApiServiceModule as an extension");
+            }
+            if (m instanceof ApiServerModule) {
+                throw new IllegalArgumentException("cannot install ApiServerModule as an extension");
+            }
+        }
+
         List<Module> modules = new LinkedList<>();
+        modules.add(servletModule);
+        modules.add(serverModule);
+        modules.addAll(Arrays.asList(extensions));
 
-        final Api _this = this;
-        modules.add(
-                new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        bind(Api.class).toInstance(_this);
-                    }
-                }
-        );
+        this.injector = Guice.createInjector(stage, modules);
+//        List<Module> modules = new LinkedList<>();
+//
+//        final Api _this = this;
+//        modules.add(
+//                new AbstractModule() {
+//                    @Override
+//                    protected void configure() {
+//                        bind(Api.class).toInstance(_this);
+//                    }
+//                }
+//        );
+//
+//        modules.addAll(Arrays.asList(moduleList));
 
-        modules.addAll(Arrays.asList(moduleList));
-
-        this.guice = new InternalInjectorCreator()
-                .addModules(modules)
-                .stage(stage)
-                .build();
+//        this.injector = new InternalInjectorCreator()
+//                .addModules(Arrays.asList(moduleList))
+//                .stage(stage)
+//                .build();
     }
 
     public Injector injector() {
-        return this.guice;
+        return this.injector;
     }
 
     public Api addModules(Module... modules) {
@@ -48,18 +63,18 @@ public class Api {
             throw new IllegalArgumentException();
         }
         synchronized (lock) {
-            guice = guice.createChildInjector(Arrays.asList(modules));
+            injector = injector.createChildInjector(Arrays.asList(modules));
         }
         return this;
     }
 
-    public ApiServer server() {
-        return guice.getInstance(ApiServer.class);
-    }
+//    public ApiServer server() {
+//        return injector.getInstance(ApiServer.class);
+//    }
 
 
     public ApiServlet servlet() {
-        return guice.getInstance(ApiServlet.class);
+        return injector.getInstance(ApiServlet.class);
     }
 
 }
