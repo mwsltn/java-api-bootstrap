@@ -19,6 +19,7 @@ package net.tretin.api.core;
 
 import com.google.inject.Stage;
 import net.tretin.api.core.testrs.TestEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -26,18 +27,32 @@ import static junit.framework.TestCase.assertSame;
 
 public class ApiTest {
 
-    @Test
-    public void instantiate() {
-        Api api = new Api(
+    private Api api;
+
+    @Before
+    public void setup() {
+        this.api = new Api(
                 Stage.DEVELOPMENT,
                 ApiServletModule.builder()
                         .addClass(TestEndpoint.class)
                         .build(),
                 ApiServerModule.defaults()
         );
+    }
+
+    @Test
+    public void instantiate() {
         assertNotNull(api);
-        assertNotNull(api.injector().getInstance(Api.class));
-        assertSame(api, api.injector().getInstance(Api.class));
+    }
+
+    @Test
+    public void server() {
+        assertNotNull(api.server());
+    }
+
+    @Test
+    public void servlet() {
+        assertNotNull(api.servlet());
     }
 
 }
