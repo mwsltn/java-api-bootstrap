@@ -1,6 +1,5 @@
 package net.tretin.api.core;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.eclipse.jetty.http.HttpCompliance;

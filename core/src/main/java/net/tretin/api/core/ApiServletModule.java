@@ -70,42 +70,6 @@ public final class ApiServletModule extends AbstractModule {
         }
     }
 
-//    static abstract class BindingListener extends AbstractContainerLifecycleListener {
-
-            //api.bridgeInjector(container);
-//            if (container == null) {
-//                throw new IllegalArgumentException();
-//            }
-//
-//            GuiceBridge.getGuiceBridge()
-//                    .initializeGuiceBridge(getServiceLocator(jerseyInjector(container)));
-//
-//            getServiceLocator(jerseyInjector(container))
-//                    .getService(GuiceIntoHK2Bridge.class)
-//                    .bridgeGuiceInjector(api.injector());
-//
-//            api.addModules(new HK2IntoGuiceBridge(getServiceLocator(jerseyInjector(container))));
- //       }
-//
-//        ServiceLocator getServiceLocator(InjectionManager jerseyInjector) {
-//            if (jerseyInjector == null) {
-//                throw new IllegalArgumentException();
-//            }
-//
-//            ServiceLocator serviceLocator = jerseyInjector.getInstance(ServiceLocator.class);
-//            if (serviceLocator == null) {
-//                throw new RuntimeException("can't find service locator");
-//            }
-//
-//            return serviceLocator;
-//        }
-//
-//        InjectionManager jerseyInjector(Container container) {
-//            return container.getApplicationHandler().getInjectionManager();
-//        }
-//    }
-
-
     @Override
     protected void configure() {
         bind(PackageSources.class).toInstance(new PackageSources(packages));
