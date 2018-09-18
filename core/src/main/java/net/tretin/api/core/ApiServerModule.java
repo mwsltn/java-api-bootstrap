@@ -16,21 +16,21 @@ public class ApiServerModule extends AbstractModule {
         private ApiConfig c = null;
 
         public Builder setDefaultConfig() {
-            c = null;
+            this.c = null;
             return this;
         }
 
         public Builder setConfig(ApiConfig config) {
             if (config == null) throw new IllegalArgumentException();
-            c = config;
+            this.c = config;
             return this;
         }
 
         public ApiServerModule build() {
-            if (c == null) {
+            if (this.c == null) {
                 return new ApiServerModule(new DefaultConfig());
             } else {
-                return new ApiServerModule(c);
+                return new ApiServerModule(this.c);
             }
         }
     }
@@ -121,10 +121,6 @@ public class ApiServerModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        if (apiConfig != null) {
-            bind(ApiConfig.class).toInstance(apiConfig);
-        } else {
-            bind(ApiConfig.class).toInstance(new DefaultConfig());
-        }
+        bind(ApiConfig.class).toInstance(apiConfig);
     }
 }

@@ -1,7 +1,18 @@
 package net.tretin.api.core;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Singleton;
+import com.google.inject.Stage;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.jersey.internal.inject.InjectionManager;
+import org.glassfish.jersey.server.spi.AbstractContainerLifecycleListener;
+import org.glassfish.jersey.server.spi.Container;
+import org.jvnet.hk2.guice.bridge.api.GuiceBridge;
+import org.jvnet.hk2.guice.bridge.api.GuiceIntoHK2Bridge;
+import org.jvnet.hk2.guice.bridge.api.HK2IntoGuiceBridge;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -9,14 +20,19 @@ import java.util.List;
 
 @Singleton
 public class Api {
-    private final static Object lock = new Object();
+    static abstract class BindingListener extends AbstractContainerLifecycleListener {}
 
-    private Injector injector;
+    private final ApiServerModule serverModule;
+    private final ApiServletModule servletModule;
+    private final List<Module> extensions;
+
+    private Injector injector = null;
 
     public Api(Stage stage, ApiServletModule servletModule, ApiServerModule serverModule, Module... extensions) {
         if (stage == null) throw new IllegalArgumentException();
         if (servletModule == null) throw new IllegalArgumentException();
         if (serverModule == null) throw new IllegalArgumentException();
+        if (extensions == null) throw new IllegalArgumentException();
 
         for (Module m : extensions) {
             if (m instanceof ApiServletModule) {
@@ -27,62 +43,76 @@ public class Api {
             }
         }
 
-        List<Module> modules = new LinkedList<>();
-        final Api _this = this;
-        modules.add(
+        this.servletModule = servletModule;
+        this.serverModule = serverModule;
+        this.extensions = Arrays.asList(extensions);
+
+        this.injector = Guice.createInjector(
+                stage,
                 new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(Api.class).toInstance(_this);
+                        bind(BindingListener.class).toInstance(
+                                new BindingListener() {
+                                    @Override
+                                    public void onStartup(Container container) {
+                                        bridgeInjector(container);
+                                    }
+                                }
+                        );
                     }
-                }
+                },
+                servletModule,
+                serverModule
         );
-        modules.add(servletModule);
-        modules.add(serverModule);
-        modules.addAll(Arrays.asList(extensions));
-
-        this.injector = Guice.createInjector(stage, modules);
-//        List<Module> modules = new LinkedList<>();
-//
-//        final Api _this = this;
-//        modules.add(
-//                new AbstractModule() {
-//                    @Override
-//                    protected void configure() {
-//                        bind(Api.class).toInstance(_this);
-//                    }
-//                }
-//        );
-//
-//        modules.addAll(Arrays.asList(moduleList));
-
-//        this.injector = new InternalInjectorCreator()
-//                .addModules(Arrays.asList(moduleList))
-//                .stage(stage)
-//                .build();
     }
 
-    public Injector injector() {
-        return this.injector;
-    }
-
-    public Api addModules(Module... modules) {
-        if (modules == null || modules.length == 0) {
+    public void bridgeInjector(Container container) {
+        if (container == null) {
             throw new IllegalArgumentException();
         }
-        synchronized (lock) {
-            injector = injector.createChildInjector(Arrays.asList(modules));
-        }
-        return this;
+
+        List<Module> modules = new LinkedList<>();
+
+        modules.addAll(extensions);
+        modules.add(new HK2IntoGuiceBridge(getServiceLocator(jerseyInjector(container))));
+        Injector bridged = this.injector.createChildInjector(modules);
+
+        GuiceBridge.getGuiceBridge()
+                .initializeGuiceBridge(getServiceLocator(jerseyInjector(container)));
+
+        getServiceLocator(jerseyInjector(container))
+                .getService(GuiceIntoHK2Bridge.class)
+                .bridgeGuiceInjector(bridged);
     }
 
-//    public ApiServer server() {
-//        return injector.getInstance(ApiServer.class);
-//    }
+    private ServiceLocator getServiceLocator(InjectionManager jerseyInjector) {
+        if (jerseyInjector == null) {
+            throw new IllegalArgumentException();
+        }
 
+        ServiceLocator serviceLocator = jerseyInjector.getInstance(ServiceLocator.class);
+        if (serviceLocator == null) {
+            throw new RuntimeException("can't find service locator");
+        }
+
+        return serviceLocator;
+    }
+
+    private InjectionManager jerseyInjector(Container container) {
+        return container.getApplicationHandler().getInjectionManager();
+    }
+
+    public ApiServer server() {
+        return injector.getInstance(ApiServer.class);
+    }
 
     public ApiServlet servlet() {
         return injector.getInstance(ApiServlet.class);
+    }
+
+    Injector injector() {
+        return this.injector;
     }
 
 }

@@ -12,7 +12,7 @@ public final class ApiServlet extends ServletContainer {
             ResourceConfig resourceConfig,
             ApiServletModule.PackageSources packageSources,
             ApiServletModule.ClassSources classSources,
-            ApiServletModule.BindingListener bindingListener) {
+            Api.BindingListener bindingListener) {
         super(resourceConfig);
 
         if (resourceConfig == null) throw new IllegalArgumentException();
