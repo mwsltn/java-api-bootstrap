@@ -2,6 +2,8 @@ package net.tretin.api.core;
 
 import com.google.inject.AbstractModule;
 
+import java.util.Optional;
+
 public class ApiServerModule extends AbstractModule {
 
     public static Builder builder() {
@@ -12,104 +14,78 @@ public class ApiServerModule extends AbstractModule {
         return builder().setDefaultConfig().build();
     }
 
-    public static class Builder {
-        private ApiConfig c = null;
-
-        public Builder setDefaultConfig() {
-            this.c = null;
-            return this;
-        }
-
-        public Builder setConfig(ApiConfig config) {
-            if (config == null) throw new IllegalArgumentException();
-            this.c = config;
-            return this;
-        }
-
-        public ApiServerModule build() {
-            if (this.c == null) {
-                return new ApiServerModule(new DefaultConfig());
-            } else {
-                return new ApiServerModule(this.c);
-            }
-        }
-    }
-
     public interface ApiConfig {
-        int getMinThreads();
-
-        int getMaxThreads();
-
-        String getPoolName();
-
-        int getNumAcceptors();
-
-        int getNumSelectors();
-
-        String getHost();
-
-        int getIdleTimeout();
-
-        int getPort();
-
-        int getSoLingerTime();
-
-        byte[] getShutdownSecret();
-    }
-
-    public static abstract class AbstractConfig implements ApiConfig {
-        @Override
-        public int getMinThreads() {
+        default int getMinThreads() {
             return 4;
         }
 
-        @Override
-        public int getMaxThreads() {
+
+        default int getMaxThreads() {
             return 512;
         }
 
-        @Override
-        public String getPoolName() {
+
+        default String getPoolName() {
             return "jetty-monitored-thread-pool";
         }
 
-        @Override
-        public int getNumAcceptors() {
+
+        default int getNumAcceptors() {
             return -1;
         }
 
-        @Override
-        public int getNumSelectors() {
+
+        default int getNumSelectors() {
             return -1;
         }
 
-        @Override
-        public String getHost() {
+
+        default String getHost() {
             return "localhost";
         }
 
-        @Override
-        public int getIdleTimeout() {
+
+        default int getIdleTimeout() {
             return 30000;
         }
 
-        @Override
-        public int getPort() {
+
+        default int getPort() {
             return 8080;
         }
 
-        @Override
-        public int getSoLingerTime() {
+
+        default int getSoLingerTime() {
             return -1;
         }
 
-        @Override
-        public byte[] getShutdownSecret() {
+
+        default byte[] getShutdownSecret() {
             return String.valueOf("shutdown").getBytes();
         }
     }
 
-    public static final class DefaultConfig extends AbstractConfig {
+    public static class Builder {
+        private Optional<ApiConfig> apiConfig;
+
+        public Builder setDefaultConfig() {
+            apiConfig = Optional.empty();
+            return this;
+        }
+
+        public Builder setConfig(ApiConfig apiConfig) {
+            if (apiConfig == null) throw new IllegalArgumentException();
+            this.apiConfig = Optional.of(apiConfig);
+            return this;
+        }
+
+        public ApiServerModule build() {
+            return apiConfig.map(ApiServerModule::new)
+                    .orElseGet(
+                            () -> new ApiServerModule(new ApiConfig() {
+                            })
+                    );
+        }
     }
 
     private ApiConfig apiConfig;
