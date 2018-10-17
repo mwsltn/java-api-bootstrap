@@ -36,7 +36,7 @@ public class ApiTest {
                 ApiServletModule.builder()
                         .addClass(TestEndpoint.class)
                         .build(),
-                ApiServerModule.defaults()
+                ApiServerModule.withDeafultConfig()
         );
     }
 

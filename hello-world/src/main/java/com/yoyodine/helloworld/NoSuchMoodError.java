@@ -15,7 +15,12 @@
  * along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.tretin.api.core;
+package com.yoyodine.helloworld;
 
-public class ApiLogModule {
+import net.tretin.api.core.ApiException;
+
+public class NoSuchMoodError extends ApiException {
+    public NoSuchMoodError(String mood) {
+        super(String.format("no such mood: '%s'", mood));
+    }
 }

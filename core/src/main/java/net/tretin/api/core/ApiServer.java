@@ -18,7 +18,7 @@ public class ApiServer {
     private final Server server;
 
     @Inject
-    public ApiServer(ApiServerModule.ApiConfig config, ApiServlet servlet) {
+    public ApiServer(ApiConfig config, ApiServlet servlet) {
         MonitoredQueuedThreadPool threadPool = new MonitoredQueuedThreadPool();
         threadPool.setMinThreads(config.getMinThreads());
         threadPool.setMaxThreads(config.getMaxThreads());

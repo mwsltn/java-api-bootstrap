@@ -25,10 +25,9 @@ public final class ApiServletModule extends AbstractModule {
         this.classes = Collections.unmodifiableSet(classes);
     }
 
-    public static final ApiServletModule.Builder builder() {
+    public static ApiServletModule.Builder builder() {
         return new ApiServletModule.Builder();
     }
-
 
     public static final class Builder {
         private Set<String> packages = new HashSet<>();

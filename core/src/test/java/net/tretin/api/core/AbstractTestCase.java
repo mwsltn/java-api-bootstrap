@@ -33,7 +33,7 @@ public abstract class AbstractTestCase<T> {
                 ApiServletModule.builder()
                         .addClass(TestEndpoint.class)
                         .build(),
-                ApiServerModule.defaults()
+                ApiServerModule.withDeafultConfig()
         );
     }
 
@@ -44,7 +44,7 @@ public abstract class AbstractTestCase<T> {
         this(
                 clazz,
                 servletModule,
-                ApiServerModule.defaults()
+                ApiServerModule.withDeafultConfig()
         );
     }
 

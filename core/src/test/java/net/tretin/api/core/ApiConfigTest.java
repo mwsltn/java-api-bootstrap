@@ -22,9 +22,9 @@ import static junit.framework.TestCase.assertNotNull;
 
 public class ApiConfigTest {
 
-    public static class DefaulConfig extends AbstractTestCase<ApiServerModule.ApiConfig> {
+    public static class DefaulConfig extends AbstractTestCase<ApiConfig> {
         public DefaulConfig() {
-            super(ApiServerModule.ApiConfig.class);
+            super(ApiConfig.class);
         }
 
         @Override
@@ -34,20 +34,19 @@ public class ApiConfigTest {
         }
     }
 
-    public static class CustomConfig extends AbstractTestCase<ApiServerModule.ApiConfig> {
+    public static class CustomConfig extends AbstractTestCase<ApiConfig> {
         public CustomConfig() {
             super(
-                    ApiServerModule.ApiConfig.class,
-                    ApiServerModule.builder()
-                            .setConfig(
-                                    new ApiServerModule.AbstractConfig() {
+                    ApiConfig.class,
+                    ApiServerModule
+                            .withConfig(
+                                    new ApiConfig() {
                                         @Override
                                         public int getPort() {
                                             return 1234;
                                         }
                                     }
                             )
-                            .build()
 
             );
         }
